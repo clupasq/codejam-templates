@@ -51,6 +51,9 @@ class Heap:
         return None
 
     def __float_up(self, idx):
+        if idx > self.__last_index():
+            # This can happen after removing the last item
+            return
         if idx == 0:
             self.__bubble_down(idx)
             return
@@ -175,5 +178,12 @@ class Tests(unittest.TestCase):
         result = h.remove((4, "item2"))
         self.assertTrue(result)
         self.assertEqual(h.peek(), (4, "item3"))
+
+    def test_remove_last_item(self):
+        h = Heap()
+        h.insert(1)
+        h.insert(2)
+        h.remove(2)
+
 
 unittest.main()
