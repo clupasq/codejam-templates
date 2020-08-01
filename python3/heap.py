@@ -6,7 +6,7 @@ class Heap:
 
     def __init__(self, **kwargs):
         self.list = []
-        self.sortkey = kwargs.get("key", lambda x: x)
+        self.sortkey = kwargs.get("sortkey", lambda x: x)
 
     def insert(self, new_item):
         self.list.append(new_item)
@@ -20,6 +20,35 @@ class Heap:
         popped = self.list.pop()
         self.__bubble_down(0)
         return popped
+
+    def remove(self, item):
+        idx_to_remove = self.__find_index(item)
+        if idx_to_remove is None:
+            return False
+        self.__swap(idx_to_remove, self.__last_index())
+        self.list.pop()
+        self.__bubble_down(0)
+        return True
+
+    def __len__(self):
+        return len(self.list)
+
+    def __find_index(self, item):
+        return self.__find_index_recursive(item, self.sortkey(item), 0)
+
+    def __find_index_recursive(self, item, itemkey, idx):
+        while idx < len(self.list):
+            crt = self.list[idx]
+            if crt == item:
+                return idx
+            if self.sortkey(crt) > itemkey:
+                return None
+
+            lidx = self.__left_child(idx)
+            ridx = self.__right_child(idx)
+            return self.__find_index_recursive(item, itemkey, lidx) or self.__find_index_recursive(item, itemkey, ridx)
+
+        return None
 
     def __float_up(self, idx):
         if idx == 0:
@@ -123,10 +152,28 @@ class Tests(unittest.TestCase):
         rnums = [random.randint(1, 1000000) for _ in range(100)]
         snums = sorted(rnums, key = lambda x: -x)
 
-        h = Heap(key = lambda x: -x)
+        h = Heap(sortkey = lambda x: -x)
         for r in rnums:
             h.insert(r)
 
         for n in snums:
             self.assertEqual(h.pop(), n)
+
+    def test_remove_specific_item(self):
+        h = Heap(sortkey = lambda x: x[0])
+        h.insert((5, "item1"))
+        h.insert((4, "item2"))
+        h.insert((4, "item3"))
+
+        self.assertEqual(3, len(h))
+        self.assertFalse(h.remove((5, "item0")))
+        self.assertTrue(h.remove((5, "item1")))
+        self.assertFalse(h.remove((6, "item1")))
+        self.assertEqual(2, len(h))
+
+        self.assertEqual(h.peek(), (4, "item2"))
+        result = h.remove((4, "item2"))
+        self.assertTrue(result)
+        self.assertEqual(h.peek(), (4, "item3"))
+
 unittest.main()
