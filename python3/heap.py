@@ -27,7 +27,7 @@ class Heap:
             return False
         self.__swap(idx_to_remove, self.__last_index())
         self.list.pop()
-        self.__bubble_down(0)
+        self.__float_up(idx_to_remove)
         return True
 
     def __len__(self):
