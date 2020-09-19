@@ -1,3 +1,4 @@
+# pylint: disable=C0112,C0103,R0903,C0116,C0114,R0201
 
 def read_int():
     return int(input())
