@@ -27,6 +27,20 @@ class SegmentTree:
 
         return acc
 
+    def update(self, ix, newval):
+        """
+        Update one element from the initial array (a segment tree leaf),
+        and have all the segment counts updated.
+        """
+        i = ix + self.n
+        if self.arr[i] == newval:
+            return
+        delta = newval - self.arr[i]
+        self.arr[i] = newval
+        while i > 0:
+            i //= 2
+            self.arr[i] += delta
+
 class SlowOp:
     def __init__(self, arr, fn, identity_element):
         self.arr = arr
