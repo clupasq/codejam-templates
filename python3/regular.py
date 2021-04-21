@@ -17,5 +17,5 @@ def main():
         s = solution()
         print(f"Case #{ i + 1 }: {s}")
 
-
-main()
+if __name__ == "__main__":
+    main()
